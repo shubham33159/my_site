@@ -1,89 +1,31 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from datetime import date
+
+from blog.models import Post, Author, Tag
 
 # Create your views here.
 
-all_posts = [
-    {
-        "slug": "hike-in-the-mountains",
-        "image": "mountains.jpg",
-        "author": "Shubham",
-        "date": date(2025, 12, 28),
-        "title": "Mountain Hiking",
-        "excerpt": "There's nothing like the views you get when hiking in the mountains! And I wasn't even prepared for what happened whilst I was enjoying the view!",
-        "content": """
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Officiis nobis
-          aperiam est praesentium, quos iste consequuntur omnis exercitationem quam
-          velit labore vero culpa ad mollitia? Quis architecto ipsam nemo. Odio.
+# all_posts= []
 
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Officiis nobis
-          aperiam est praesentium, quos iste consequuntur omnis exercitationem quam
-          velit labore vero culpa ad mollitia? Quis architecto ipsam nemo. Odio.
-
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Officiis nobis
-          aperiam est praesentium, quos iste consequuntur omnis exercitationem quam
-          velit labore vero culpa ad mollitia? Quis architecto ipsam nemo. Odio.
-        """
-    },
-    {
-        "slug": "programming-is-fun",
-        "image": "coding.jpg",
-        "author": "Shubham",
-        "date": date(1999, 6, 16),
-        "title": "Programming Is Great!",
-        "excerpt": "Did you ever spend hours searching that one error in your code? Yep - that's what happened to me yesterday...",
-        "content": """
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Officiis nobis
-          aperiam est praesentium, quos iste consequuntur omnis exercitationem quam
-          velit labore vero culpa ad mollitia? Quis architecto ipsam nemo. Odio.
-
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Officiis nobis
-          aperiam est praesentium, quos iste consequuntur omnis exercitationem quam
-          velit labore vero culpa ad mollitia? Quis architecto ipsam nemo. Odio.
-
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Officiis nobis
-          aperiam est praesentium, quos iste consequuntur omnis exercitationem quam
-          velit labore vero culpa ad mollitia? Quis architecto ipsam nemo. Odio.
-        """
-    },
-    {
-        "slug": "into-the-woods",
-        "image": "woods.jpg",
-        "author": "Shubham",
-        "date": date(2025, 12, 27),
-        "title": "Nature At Its Best",
-        "excerpt": "Nature is amazing! The amount of inspiration I get when walking in nature is incredible!",
-        "content": """
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Officiis nobis
-          aperiam est praesentium, quos iste consequuntur omnis exercitationem quam
-          velit labore vero culpa ad mollitia? Quis architecto ipsam nemo. Odio.
-
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Officiis nobis
-          aperiam est praesentium, quos iste consequuntur omnis exercitationem quam
-          velit labore vero culpa ad mollitia? Quis architecto ipsam nemo. Odio.
-
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Officiis nobis
-          aperiam est praesentium, quos iste consequuntur omnis exercitationem quam
-          velit labore vero culpa ad mollitia? Quis architecto ipsam nemo. Odio.
-        """
-    }
-]
 
 def starting_page(request):
-    sorted_list = sorted(all_posts, key=lambda posts: posts['date'])
-    latest_posts = sorted_list[-3:]
+    latest_posts = Post.objects.all().order_by("-date")[:3]
+
     return render(request, "blog/index.html", {
         "posts" : latest_posts
     })
-    # return render(request, "blog/index.html")
 
 def posts(request):
+    all_posts = Post.objects.all().order_by("-date")
     return render(request, "blog/all-posts.html", {
         "posts" : all_posts
     })
 
 def post_detail(request, slug):
-    identified_post = next(post for post in all_posts if post["slug"] == slug)
+    
+    identified_post = Post.objects.get(slug=slug)
+    # identified_post = get_object_or_404(Post, slug=slug)
     return render(request, "blog/post-details.html", {
-        "post" : identified_post
+        "post" : identified_post,
+        "post_tags" : identified_post.tags.all()
     })

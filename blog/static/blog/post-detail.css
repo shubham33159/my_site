@@ -28,6 +28,16 @@ body {
 #summary h2 {
   color: white;
   font-size: 4.5rem;
+  margin-bottom: 0.2rem;
+}
+
+.tag {
+  background-color: white;
+  color: #390281;
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  margin: 0.1rem;
+
 }
 
 #summary article {
@@ -51,6 +61,11 @@ body {
 
 #summary address {
   font-weight: bold;
+}
+
+#summary a{
+  color: white;
+  text-decoration: none;
 }
 
 #summary time {
